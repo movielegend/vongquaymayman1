@@ -1,22 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-// ✅ Đưa ra ngoài component
-const prizes = [
-  10, 20, 30, 50, 100,
-  10, 20, 30, 50, 100,
-  20, 30
-];
-
+// 🎯 Mệnh giá mới
+const prizes = [10, 20, 50, 100, 200, 500];
 const colors = ["#e53935", "#1e88e5", "#43a047", "#fdd835"];
 
 function App() {
   const wheelRef = useRef(null);
+
   const [result, setResult] = useState("");
   const [hasSpun, setHasSpun] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [orderId, setOrderId] = useState("");
 
   const segmentAngle = 360 / prizes.length;
 
+  // 🎨 Tạo màu vòng quay (chỉ 1 useEffect thôi)
   useEffect(() => {
     const wheel = wheelRef.current;
 
@@ -28,57 +27,16 @@ function App() {
     gradient = gradient.slice(0, -1) + ")";
     wheel.style.background = gradient;
 
-  }, [segmentAngle]); // ✅ chỉ cần segmentAngle
-
-  // phần còn lại giữ nguyên
-
-  // 🎨 Tạo màu vòng quay
-  useEffect(() => {
-    const wheel = wheelRef.current;
-
-    let gradient = "conic-gradient(";
-    prizes.forEach((_, i) => {
-      const color = colors[i % colors.length];
-      gradient += `${color} ${i * segmentAngle}deg ${(i + 1) * segmentAngle}deg,`;
-    });
-    gradient = gradient.slice(0, -1) + ")";
-    wheel.style.background = gradient;
-
-  }, [prizes, colors, segmentAngle]); // ✅ FIX ESLINT
-
-  // 🔍 CHECK khi load trang
-  useEffect(() => {
-    const checkStatus = async () => {
-      const userId = localStorage.getItem("userId");
-      if (!userId) return;
-
-      const res = await fetch(
-        "https://vongquaymayman1.onrender.com/check",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.hasSpun) {
-        setHasSpun(true);
-        setResult(`🎉 Bạn đã trúng: ${data.prize}k`);
-      }
-    };
-
-    checkStatus();
-  }, []);
+  }, [segmentAngle]);
 
   const handleSpin = async () => {
     if (hasSpun) return;
 
-    const userId =
-      localStorage.getItem("userId") || crypto.randomUUID();
-
-    localStorage.setItem("userId", userId);
+    // Validate
+    if (!phone || !orderId) {
+      alert("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
 
     const res = await fetch(
       "https://vongquaymayman1.onrender.com/spin",
@@ -87,7 +45,10 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({
+          phone,
+          orderId,
+        }),
       }
     );
 
@@ -117,6 +78,24 @@ function App() {
     <div className="container">
       <h1>🎯 Vòng Quay May Mắn</h1>
 
+      {/* FORM */}
+      <div className="form">
+        <input
+          type="text"
+          placeholder="Số điện thoại"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="ID đơn hàng"
+          value={orderId}
+          onChange={(e) => setOrderId(e.target.value)}
+        />
+      </div>
+
+      {/* WHEEL */}
       <div className="wheel-wrapper">
         <div className="pointer"></div>
 
@@ -128,12 +107,12 @@ function App() {
               style={{
                 transform: `
                   rotate(${i * segmentAngle + segmentAngle / 2}deg)
-                  translate(170px)
+                  translate(35%)
                   rotate(-${i * segmentAngle + segmentAngle / 2}deg)
                 `,
               }}
             >
-              {prize}
+              {prize}k
             </div>
           ))}
         </div>
