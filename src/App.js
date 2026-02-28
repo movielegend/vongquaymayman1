@@ -59,7 +59,7 @@ function App() {
 
     localStorage.setItem("userId", userId);
 
-    const res = await fetch("http://localhost:5000/spin", {
+    const res = await fetch("https://vongquaymayman1.onrender.com/spin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
