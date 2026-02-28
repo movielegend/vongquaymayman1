@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-// 🎯 Mệnh giá mới
+// 🎯 Mệnh giá
 const prizes = [10, 20, 50, 100, 200, 500];
 const colors = ["#e53935", "#1e88e5", "#43a047", "#fdd835"];
 
@@ -15,7 +15,7 @@ function App() {
 
   const segmentAngle = 360 / prizes.length;
 
-  // 🎨 Tạo màu vòng quay (chỉ 1 useEffect thôi)
+  // 🎨 Vẽ màu vòng quay
   useEffect(() => {
     const wheel = wheelRef.current;
 
@@ -25,14 +25,13 @@ function App() {
       gradient += `${color} ${i * segmentAngle}deg ${(i + 1) * segmentAngle}deg,`;
     });
     gradient = gradient.slice(0, -1) + ")";
-    wheel.style.background = gradient;
 
-  }, [segmentAngle]);
+    wheel.style.background = gradient;
+  }, []);
 
   const handleSpin = async () => {
     if (hasSpun) return;
 
-    // Validate
     if (!phone || !orderId) {
       alert("Vui lòng nhập đầy đủ thông tin");
       return;
@@ -42,13 +41,8 @@ function App() {
       "https://vongquaymayman1.onrender.com/spin",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone,
-          orderId,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, orderId }),
       }
     );
 
@@ -100,21 +94,24 @@ function App() {
         <div className="pointer"></div>
 
         <div className="wheel" ref={wheelRef}>
-          {prizes.map((prize, i) => (
-            <div
-              key={i}
-              className="segment-text"
-              style={{
-                transform: `
-                  rotate(${i * segmentAngle + segmentAngle / 2}deg)
-                  translate(35%)
-                  rotate(-${i * segmentAngle + segmentAngle / 2}deg)
-                `,
-              }}
-            >
-              {prize}k
-            </div>
-          ))}
+          {prizes.map((prize, i) => {
+            const angle = i * segmentAngle + segmentAngle / 2;
+            return (
+              <div
+                key={i}
+                className="segment-text"
+                style={{
+                  transform: `
+                    rotate(${angle}deg)
+                    translateY(-130px)
+                    rotate(-${angle}deg)
+                  `,
+                }}
+              >
+                {prize}k
+              </div>
+            );
+          })}
         </div>
 
         <div className="center-circle"></div>
