@@ -1,19 +1,36 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
+// ✅ Đưa ra ngoài component
+const prizes = [
+  10, 20, 30, 50, 100,
+  10, 20, 30, 50, 100,
+  20, 30
+];
+
+const colors = ["#e53935", "#1e88e5", "#43a047", "#fdd835"];
+
 function App() {
   const wheelRef = useRef(null);
   const [result, setResult] = useState("");
   const [hasSpun, setHasSpun] = useState(false);
 
-  const prizes = [
-    10, 20, 30, 50, 100,
-    10, 20, 30, 50, 100,
-    20, 30
-  ];
-
-  const colors = ["#e53935", "#1e88e5", "#43a047", "#fdd835"];
   const segmentAngle = 360 / prizes.length;
+
+  useEffect(() => {
+    const wheel = wheelRef.current;
+
+    let gradient = "conic-gradient(";
+    prizes.forEach((_, i) => {
+      const color = colors[i % colors.length];
+      gradient += `${color} ${i * segmentAngle}deg ${(i + 1) * segmentAngle}deg,`;
+    });
+    gradient = gradient.slice(0, -1) + ")";
+    wheel.style.background = gradient;
+
+  }, [segmentAngle]); // ✅ chỉ cần segmentAngle
+
+  // phần còn lại giữ nguyên
 
   // 🎨 Tạo màu vòng quay
   useEffect(() => {
