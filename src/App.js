@@ -15,7 +15,7 @@ function App() {
   const colors = ["#e53935", "#1e88e5", "#43a047", "#fdd835"];
   const segmentAngle = 360 / prizes.length;
 
-  // Tạo màu vòng quay
+  // 🎨 Tạo màu vòng quay
   useEffect(() => {
     const wheel = wheelRef.current;
 
@@ -26,19 +26,23 @@ function App() {
     });
     gradient = gradient.slice(0, -1) + ")";
     wheel.style.background = gradient;
-  }, []);
 
-  // CHECK khi load trang
+  }, [prizes, colors, segmentAngle]); // ✅ FIX ESLINT
+
+  // 🔍 CHECK khi load trang
   useEffect(() => {
     const checkStatus = async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) return;
 
-      const res = await fetch("http://localhost:5000/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
+      const res = await fetch(
+        "https://vongquaymayman1.onrender.com/check",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        }
+      );
 
       const data = await res.json();
 
@@ -59,13 +63,16 @@ function App() {
 
     localStorage.setItem("userId", userId);
 
-    const res = await fetch("https://vongquaymayman1.onrender.com/spin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId }),
-    });
+    const res = await fetch(
+      "https://vongquaymayman1.onrender.com/spin",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      }
+    );
 
     const data = await res.json();
 
