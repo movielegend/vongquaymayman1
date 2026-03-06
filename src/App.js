@@ -55,7 +55,7 @@ function App() {
     }
 
     const prize = data.prize;
-    const index = prizes.indexOf(prize);
+    const index = prizes.findIndex(p => p === prize);
 
     const rotateTo =
       360 * 8 + (360 - index * segmentAngle - segmentAngle / 2);
