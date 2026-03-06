@@ -56,9 +56,10 @@ function App() {
 
     const prize = data.prize;
     const index = prizes.findIndex(p => p === prize);
+    //const randomOffset = Math.random() * (segmentAngle * 0.8);
 
     const rotateTo =
-      360 * 8 + (360 - index * segmentAngle - segmentAngle / 2);
+      360 * 8 + (360 - index * segmentAngle - segmentAngle / 2) - 90;
 
     wheelRef.current.style.transform = `rotate(${rotateTo}deg)`;
 
